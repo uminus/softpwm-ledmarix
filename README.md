@@ -27,5 +27,8 @@ Tiny demo that drives an 8×8 LED matrix using software PWM on an ATtiny1616 (Ar
 - Animates a single footer bit that shifts each tick.
 - Smoothly oscillates brightness between about 10% and 100%.
 
+## Schematic
+![schematic.png](schematic.png)
+
 ## License
 MIT‑style hobby/educational use. Use at your own risk.
