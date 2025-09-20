@@ -11,7 +11,7 @@ class SoftPWM_LedMatrix {
     float duty_ = 0.9f;
 
     unsigned long nextStepMicros_ = 0;
-    bool isNextHigh = true;
+    bool isLedOnPhase = true;
     uint8_t currentCol = 0;
 
 public:
@@ -59,15 +59,6 @@ public:
         if (nextStepMicros_ > now) {
             return;
         }
-        const int durationHigh = static_cast<int>(periodMicros_ * duty_);
-        if (isNextHigh) {
-            nextStepMicros_ = now + durationHigh;
-            isNextHigh = false;
-        } else {
-            nextStepMicros_ = now + periodMicros_ - durationHigh;
-            isNextHigh = true;
-            currentCol = currentCol == 7 ? 0 : currentCol + 1;
-        }
 
         for (uint8_t thisCol = 0; thisCol < 8; thisCol++) {
             digitalWrite(pinCols_[thisCol], thisCol == currentCol ? HIGH : LOW);
@@ -76,8 +67,18 @@ public:
         const auto rowByte = pixels[currentCol];
         for (uint8_t thisRow = 0; thisRow < 8; ++thisRow) {
             const bool bit = (rowByte >> thisRow & 0x01) != 0;
-            const int colVal = bit && isNextHigh ? LOW : HIGH;
+            const int colVal = bit && isLedOnPhase && duty_ > 0.01f ? LOW : HIGH;
             digitalWrite(pinRows_[thisRow], colVal);
+        }
+
+        const int durationHigh = static_cast<int>(periodMicros_ * duty_);
+        if (isLedOnPhase) {
+            nextStepMicros_ = now + durationHigh;
+            isLedOnPhase = false;
+        } else {
+            nextStepMicros_ = now + periodMicros_ - durationHigh;
+            isLedOnPhase = true;
+            currentCol = currentCol == 7 ? 0 : currentCol + 1;
         }
     }
 };
