@@ -8,15 +8,42 @@ enum TimerState {
     COMPLETED,
 };
 
+/**
+ *  Pomodoro phases
+ *
+ * - WORK: 25 min.
+ * - BREAK: 5 min.
+ */
+enum Phase: unsigned long {
+#ifdef DEBUG
+    WORK = 5L * 1000L,
+    BREAK = 3L * 1000,
+#else
+    WORK = 25L * 60L * 1000L,
+    BREAK = 5L * 60 * 1000,
+#endif
+};
+
 
 class PomodoroTimer {
     unsigned long started_at_ = 0L;
     TimerState state_ = STOPPED;
+    Phase phase_ = WORK;
     unsigned long paused_at_ = 0L;
-    unsigned long duration_ = 30000L;
+    unsigned long duration_ = WORK;
 
     void completed() {
         state_ = COMPLETED;
+
+        // switch to next phase and apply duration
+        switch (phase_) {
+            case WORK:
+                phase_ = BREAK;
+                break;
+            case BREAK:
+                phase_ = WORK;
+        }
+        setDurationMillis(phase_, false);
     }
 
 public:
@@ -26,13 +53,11 @@ public:
      *
      * @param duration duration in millis.
      */
-    void setDurationMillis(const unsigned long duration) {
-        stop();
+    void setDurationMillis(const unsigned long duration, const bool reset = true) {
+        if (reset) {
+            stop();
+        }
         duration_ = duration;
-    }
-
-    [[nodiscard]] unsigned long duration() const {
-        return duration_;
     }
 
     void stop() {
@@ -88,5 +113,9 @@ public:
 
     [[nodiscard]] TimerState state() const {
         return state_;
+    }
+
+    [[nodiscard]] Phase phase() const {
+        return phase_;
     }
 };
