@@ -34,16 +34,7 @@ class PomodoroTimer {
 
     void completed() {
         state_ = COMPLETED;
-
-        // switch to next phase and apply duration
-        switch (phase_) {
-            case WORK:
-                phase_ = BREAK;
-                break;
-            case BREAK:
-                phase_ = WORK;
-        }
-        setDurationMillis(phase_, false);
+        changePhase(false);
     }
 
 public:
@@ -58,6 +49,20 @@ public:
             stop();
         }
         duration_ = duration;
+    }
+
+    /**
+     * switch to next phase and apply duration
+     */
+    void changePhase(const bool reset = true) {
+        switch (phase_) {
+            case WORK:
+                phase_ = BREAK;
+                break;
+            case BREAK:
+                phase_ = WORK;
+        }
+        setDurationMillis(phase_, reset);
     }
 
     void stop() {

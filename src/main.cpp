@@ -53,6 +53,10 @@ void setup() {
         }
     });
 
+    btn.attachDoubleClick([] {
+        timer.changePhase();
+    });
+
     btn.attachLongPressStart([] {
         matrix.setDuty(0);
     });
