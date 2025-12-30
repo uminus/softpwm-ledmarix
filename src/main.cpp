@@ -6,15 +6,16 @@
 #include "PomodoroTimer.cpp"
 
 constexpr uint8_t row[8] = {
-    PIN_PA5, PIN_PA6, PIN_PA7, PIN_PB7, PIN_PB6, PIN_PB5, PIN_PB4, PIN_PB3,
+    PIN_PB3, PIN_PA6, PIN_PB1, PIN_PB7, PIN_PA3, PIN_PB0, PIN_PC5, PIN_PC2,
 };
 
 constexpr uint8_t col[8] = {
-    PIN_PC1, PIN_PC2, PIN_PC3, PIN_PC4, PIN_PC5, PIN_PA1, PIN_PA2, PIN_PA3,
+    PIN_PA7, PIN_PC4, PIN_PC3, PIN_PB4, PIN_PC0, PIN_PB5, PIN_PA5, PIN_PA4,
 };
 
-#define BUZZ_PIN PIN_PB0
-#define BTN0_PIN PIN_PC0
+#define BUZZ_PIN PIN_PB2
+#define BTN1_PIN PIN_PC1
+#define BTN2_PIN PIN_PB6
 
 PomodoroTimer timer;
 SoftPWM_LedMatrix matrix(row, col);
@@ -25,13 +26,13 @@ void setup() {
     _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0b00000011); // div4
 
     matrix.setup();
-    matrix.setPeriodMicros(2000);
+    matrix.setPeriodMicros(1000);
     matrix.setDuty(.7f);
 
     pinMode(BUZZ_PIN, OUTPUT);
     delay(1000);
 
-    btn.setup(BTN0_PIN, INPUT_PULLUP, true);
+    btn.setup(BTN1_PIN, INPUT_PULLUP, true);
     btn.attachClick([] {
         switch (timer.state()) {
             case STOPPED:
@@ -66,12 +67,12 @@ void setup() {
         noInterrupts();
         sleep_enable();
         interrupts();
-        PORTC.PIN0CTRL = PORT_PULLUPEN_bm | PORT_ISC_LEVEL_gc; //pull up PC0, trigger on low level
+        PORTC.PIN1CTRL = PORT_PULLUPEN_bm | PORT_ISC_LEVEL_gc; //pull up PC0, trigger on low level
         sleep_cpu();
 
         //the program will continue after waking up from here
         sleep_disable();
-        PORTC.PIN0CTRL = PORT_PULLUPEN_bm; //pull up PC0, turn off the pin change interrupt
+        PORTC.PIN1CTRL = PORT_PULLUPEN_bm; //pull up PC0, turn off the pin change interrupt
     });
 }
 
@@ -101,7 +102,7 @@ static void makeTwoDigitIdx(unsigned long elapsedSecs, uint8_t out5[5]) {
     if (prevDigit == elapsedSecs) {
         return;
     }
-    tone(PIN_PB0, 1760, 1);
+    tone(BUZZ_PIN, 1760, 1);
     prevDigit = elapsedSecs;
 
     uint8_t leftDigit;
