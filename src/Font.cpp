@@ -29,3 +29,43 @@ static const byte FONT3x5[10][5] PROGMEM = {
     // 9
     {0b111, 0b101, 0b111, 0b001, 0b111},
 };
+
+static const byte TSUKI[7] PROGMEM = {
+    0b0011111,
+    0b0010001,
+    0b0011111,
+    0b0010001,
+    0b0011111,
+    0b0100001,
+    0b1000011,
+};
+
+static const byte KIWAMI[7] PROGMEM = {
+    0b0101111,
+    0b1110100,
+    0b0100110,
+    0b1111011,
+    0b1101011,
+    0b0100010,
+    0b0101111,
+};
+
+static const byte TEI[7] PROGMEM = {
+    0b0001000,
+    0b1111111,
+    0b1011101,
+    0b0001000,
+    0b0101110,
+    0b0101000,
+    0b1011111,
+};
+
+static const byte SO[7] PROGMEM = {
+    0b1110101,
+    0b0101111,
+    0b0100101,
+    0b1001010,
+    0b0110111,
+    0b0110110,
+    0b0001011,
+};
